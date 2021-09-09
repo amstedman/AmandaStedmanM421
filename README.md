@@ -1,1 +1,1 @@
-# AmandaStedmanM421
+# Math421. Statistical Analysis with R
