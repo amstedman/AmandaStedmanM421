@@ -2,3 +2,5 @@
 [click here to my Assignment 1](Assignment-1.html)
 
 [Assignment 2](Assignment2.html)
+
+[Assignment 3](Assignment3.html)
