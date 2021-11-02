@@ -1,0 +1,167 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 12: Predictive Modeling - Part 3"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](fa2021_assignment12.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Blackboard.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+-------
+
+1. Install the package `mlbench` and use the follows to import the data
+
+```{r}
+library(mlbench)
+data(PimaIndiansDiabetes)
+df <- PimaIndiansDiabetes
+```
+
+- Set seed to be 2020. 
+- The target variable is `diabetes`
+- Partition the data into 80% training and 20% testing.  
+```{r}
+library(caret)
+set.seed(2020)
+splitIndex <- createDataPartition(df$diabetes, p = .80, list = FALSE)
+df_train <- df[splitIndex,]
+df_test <- df[-splitIndex,]
+```
+
+-------
+
+2. Use cross-validation of 30 folds to tune random forest (method='rf').  What is the `mtry` value that produces the greatest accuracy?
+```{r}
+trControl = trainControl(method = "cv", number = 30)
+tuneGrid = expand.grid(mtry = 1:5)
+forest_rf <- train(diabetes~., data=df_train, method = "rf", trControl = trControl, tuneGrid = tuneGrid)
+plot(forest_rf)
+```
+ 
+ An mtry of 1 produces the highest Accuracy
+-------
+
+3. Use cross-validation with of 30 folds to tune random forest (method='ranger').  What are the parameters that produce the greatest accuracy?
+```{r}
+getModelInfo('ranger')$ranger$parameters
+```
+```{r}
+trControl = trainControl(method = "cv", number = 30)
+tuneGrid = expand.grid(mtry = 1:5, splitrule = c('gini', 'extratrees'), min.node.size = c(1:10))
+forest_ranger <- train(diabetes~., data=df_train, method = "ranger", trControl = trControl, tuneGrid = tuneGrid)
+```
+```{r}
+plot(forest_ranger)
+```
+
+the 7 tree gini with min node size of 7 had highest accuracy
+-------
+
+4. Go to https://topepo.github.io/caret/available-models.html and pick a classification model.  Tune the classification model using cross-validation of 30 folds. 
+```{r}
+trControl = trainControl(method = "cv", number = 30)
+tuneGrid = expand.grid(mfinal = 5, maxdepth = 1:5)
+forest_step <- train(diabetes~., data=df_train, method = "AdaBag", trControl = trControl, tuneGrid = tuneGrid)
+```
+```{r}
+plot(forest_step)
+```
+
+-------
+
+5. Pick three models at [this link](https://topepo.github.io/caret/available-models.html) to compare using 15-fold cross validation method. Evaluate the accuracy of the final model on the test data. What is the best model?
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+tuneGrid = expand.grid(mfinal = 5, maxdepth = 1:5)
+forest_step1 <- train(diabetes~., data=df_test, method = "AdaBag", trControl = trControl, tuneGrid = tuneGrid)
+plot(forest_step1)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+tuneGrid = expand.grid(degree = 3, nprune = 1:5)
+forest_fda <- train(diabetes~., data=df_test, method = "fda", trControl = trControl, tuneGrid = tuneGrid)
+plot(forest_fda)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+tuneGrid = expand.grid(mstop = 1:5, prune = 5)
+forest_glm <- train(diabetes~., data=df_test, method = "glmboost", trControl = trControl, tuneGrid = tuneGrid)
+plot(forest_glm)
+```
+The AdaBag method with a MaxTree depth of 2 was the best model in terms of cross-validation
+-------
+
+6. Redo Question 5 on this following dataset. 
+
+ - `Adult Census Income` dataset ([Link](https://www.kaggle.com/uciml/adult-census-income)) where the target variable is `income`
+```{r}
+library(tidyverse)
+a <- read_csv('adult.csv')
+library(caret)
+set.seed(2020)
+splitIndex <- createDataPartition(a$income, p = .80, list = FALSE)
+a_train <- a[splitIndex,]
+a_test <- a[-splitIndex,]
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+forest_glm1 <- train(income~., data=a_test, method = "glmnet", trControl = trControl)
+plot(forest_glm1)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+forest_ctree <- train(income~., data=a_test, method = "ctree", trControl = trControl)
+plot(forest_ctree)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+forest_ctree2 <- train(income~., data=a_test, method = "ctree2", trControl = trControl)
+plot(forest_ctree2)
+```
+ 
+ -  `Credit card default` dataset ([link](https://www.kaggle.com/uciml/default-of-credit-card-clients-dataset)) where the target variable is `default.payment.next.month`
+```{r}
+library(tidyverse)
+b <- read_csv('UCI_Credit_Card.csv')
+library(caret)
+set.seed(2020)
+splitIndex <- createDataPartition(b$default.payment.next.month, p = .80, list = FALSE)
+b_train <- b[splitIndex,]
+b_test <- b[-splitIndex,]
+
+```
+```{r}
+trControl = trainControl(method = "cv", number = 5)
+forest_ctree2b <- train(default.payment.next.month~., data=b_test, method = "ctree2", trControl = trControl)
+plot(forest_ctree2b)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 5)
+forest_ctreeb <- train(default.payment.next.month~., data=b_test, method = "ctree", trControl = trControl)
+plot(forest_ctreeb)
+```
+```{r}
+trControl = trainControl(method = "cv", number = 15)
+tuneGrid = expand.grid(mstop = 1:5, prune = 5)
+forest_glm <- train(diabetes~., data=df_test, method = "glmboost", trControl = trControl, tuneGrid = tuneGrid)
+plot(forest_glm)
+```
+ 
+ 
