@@ -1,0 +1,100 @@
+---
+title: "M421 Midterm"
+author: "Amanda Stedman"
+date: "11/8/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview {data-background=Back2.jpg data-background-size=cover}
+
+- Data and Plots
+
+- Predictive Modeling
+
+- Challenges/Issues/Conclusion
+
+## Distribution of Ages Among Women {data-background=back.png data-background-size=cover}
+
+![](Image1.png)
+
+## Distribution of Providers among Women {data-background=back.png data-background-size=cover}
+
+![](Image9.png)
+
+## Number of Hospitalized Men vs Women {data-background=back.png data-background-size=cover}
+
+![](Image2.png)
+
+## Length of Stay between Genders {data-background=back.png data-background-size=cover}
+
+![](Image3.png)
+
+## Total Cost among Gender {data-background=back.png data-background-size=cover}
+
+![](Image10.png)
+
+## Teenage Patients by Provider {data-background=back.png data-background-size=cover}
+![](Image4.png)
+
+## Length of Stay vs. Total Cost Provider 7215 {data-background=back.png data-background-size=cover}
+
+![](Image8.png)
+
+## Age Distribution at Psych Hospitals {data-background=back.png data-background-size=cover}
+
+![](Image5.png)
+
+## Density of Hasbro patients by age {data-background=back.png data-background-size=cover}
+
+![](Image6.png)
+
+## Hasbro Patients by Age and Gender {data-background=back.png data-background-size=cover}
+
+![](Image7.png)
+
+## Hasbro vs. RIH Length of Stay by Month {data-background=back.png data-background-size=cover}
+![](MidtermAnimation.gif)
+
+## Model Comparison 1 {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q4.png)
+
+## Model Accuracy 1 {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q5.png)
+
+## Decision Tree {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q61.png)
+
+## Random Forest {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q62.png)
+
+## Boosted Generalized Linear Model {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q63.png)
+
+## AdaBag Model {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q64.png)
+
+## Model Comparison 2 {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q66.png)
+
+## Model Accuracy 2 {data-background=back1.jpg data-background-size=cover}
+
+![](Part3Q65.png)
+
+## Challenges & Issues {data-background=back2.jpg data-background-size=cover}
+
+- R kept freezing during Runs 
+
+- Needing to convert variables to factors 
+
+- Errors when changing targets for predictive modeling section
