@@ -9,11 +9,7 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-<<<<<<< HEAD
 ## Overview {data-background=Back2.jpg data-background-size=cover}
-=======
-## Overview
->>>>>>> 40882092678ce76aac01e250a6d0e2e25e97785c
 
 - Data and Plots
 
@@ -21,12 +17,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - Challenges/Issues/Conclusion
 
-<<<<<<< HEAD
+
 ## Distribution of Ages Among Women {data-background=back.png data-background-size=cover}
 
 ![](Image1.png)
 
-## Distribution of Providers among Women {data-background=back.png data-background-size=cover}
+## Distribution of Providers | for females aged 28-32 {data-background=back.png data-background-size=cover}
 
 ![](Image9.png)
 
@@ -42,7 +38,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ![](Image10.png)
 
-## Teenage Patients by Provider {data-background=back.png data-background-size=cover}
+## Teenage Patients by Provider | includes both sexes {data-background=back.png data-background-size=cover}
 ![](Image4.png)
 
 ## Length of Stay vs. Total Cost Provider 7215 {data-background=back.png data-background-size=cover}
@@ -61,7 +57,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ![](Image7.png)
 
-## Hasbro vs. RIH Length of Stay by Month {data-background=back.png data-background-size=cover}
+## Hasbro vs. RIH Length of Stay by Month | Campus 3: RIH Campus 4: Hasbro {data-background=back.png data-background-size=cover}
 ![](MidtermAnimation.gif)
 
 ## Model Comparison 1 {data-background=back1.jpg data-background-size=cover}
@@ -97,81 +93,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ![](Part3Q65.png)
 
 ## Challenges & Issues {data-background=back2.jpg data-background-size=cover}
-=======
-## Distribution of Ages Among Women
-
-![](Image1.png)
-
-## Distribution of Providers among Women
-![](Image9.png)
-
-## Number of Hospitalized Men vs Women
-
-![](Image2.png)
-
-## Length of Stay between Genders
-![](Image3.png)
-
-## Total Cost among Gender
-
-![](Image10.png)
-
-## Teenage Patients by Provider
-![](Image4.png)
-
-## Length of Stay vs. Total Cost Provider 7215
-
-![](Image8.png)
-
-## Age Distribution at Psych Hospitals
-
-![](Image5.png)
-
-## Density of Hasbro patients by age
-
-![](Image6.png)
-
-## Hasbro Patients by Age and Gender
-
-![](Image7.png)
-
-## Hasbro vs. RIH Length of Stay by Month
-![](MidtermAnimation.gif)
-
-## Model Comparison 1
-
-![](Part3Q4.png)
-
-## Model Accuracy 1
-
-![](Part3Q5.png)
-
-## Decision Tree 
-
-![](Part3Q61.png)
-
-## Random Forest 
-
-![](Part3Q62.png)
-
-## Boosted Generalized Linear Model
-
-![](Part3Q63.png)
-
-## AdaBag Model
-
-![](Part3Q64.png)
-
-## Model Comparison 2
-
-![](Part3Q66.png)
-
-## Model Accuracy 2
-
-![](Part3Q65.png)
-
-## Challenges & Issues
->>>>>>> 40882092678ce76aac01e250a6d0e2e25e97785c
 
 - R kept freezing during Runs 
 
