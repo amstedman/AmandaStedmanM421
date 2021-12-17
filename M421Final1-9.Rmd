@@ -1,0 +1,707 @@
+---
+title: "Final"
+author: "Amanda Stedman"
+date: "12/17/2021"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+```{r message=FALSE, warning=FALSE}
+library(shiny)
+
+######################################
+# Set User Interface
+ui <- fluidPage(
+  titlePanel("Hello Shiny!"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      sliderInput(
+        inputId = "var1",
+        label = "Decide a number",
+        min = 1,
+        max = 100,
+        value=10
+      )
+      
+    ),
+    
+    mainPanel(
+      # Output: Histogram ----
+      plotOutput(outputId = 'blah1')
+    )
+    
+  )
+  
+)
+
+
+######################################
+# Main codes for the app
+server <- function(input, output) {
+  
+  output$blah1 <-renderPlot({
+    m = input$var1
+    hist(rnorm(mean=m, n=1000))
+  }
+  )
+  
+  
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+## Question 2 
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('titanic.csv')
+# drop some columns
+d <- d %>% select(-Name, -PassengerId, -Ticket, -Age, -Fare, -Cabin)
+
+# convert categorical variables to character type
+d <- d %>% mutate_at(c('Survived', 'Pclass'), as.character)
+
+# get variable names
+variables_names = names(d)
+
+# get names of categorical variables
+variables_category = d %>% select_if(is.character) %>% names
+
+ui <- fluidPage(
+  
+  titlePanel("Bar Plot for Titanic Data"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      
+      selectInput(
+        inputId ="var1",
+        label = "Select a Categorical Variables",
+        choices = variables_category, selected = "Sex"
+      ),
+      
+      selectInput(
+        inputId ="var2",
+        label = "Select another Categorical Variable",
+        choices = variables_category,
+        selected = "Embarked"
+      )
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  
+  output$show_plot <- renderPlot({
+    d = read_csv('titanic.csv')
+    v1 = input$var1
+    v2 = input$var2
+   
+    
+    library(ggplot2)
+      
+    r = ggplot(d, aes(x = d[[v1]], fill = as.factor(d[[v2]])))+
+        geom_bar()+
+        labs(x = v1, fill = v2)
+      
+    return(r)
+    
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 3
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('adult_modified.csv')
+d <- d %>% select(-native_country, -occupation)
+variables_names = names(d)
+variables_numeric = d %>% select_if(is.numeric) %>% names
+
+# get names of categorical variables
+variables_category = d %>% select_if(is.character) %>% names
+
+
+
+ui <- fluidPage(
+  
+  titlePanel("Density Plot for Adult Census Data"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      
+      selectInput(
+        inputId ="var1",
+        label = "Select a Numeric Variable",
+        choices = variables_numeric, selected = "education_num"
+      ),
+      
+      selectInput(
+        inputId ="var2",
+        label = "Select a Categorical Variable",
+        choices = variables_category,
+        selected = "sex"
+      ),
+      
+      checkboxGroupInput(inputId = "race", label = "Select Race",
+                         choices = names(table(d$race)), inline = TRUE),
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  
+  output$show_plot <- renderPlot({
+    
+    v1 = input$var1
+    v2 = input$var2
+   
+    d <- d %>% filter(race %in% input$race)
+    
+    library(ggplot2)
+    
+      ggplot(d, aes(x = d[[v1]], color = as.factor(d[[v2]])))+
+        geom_density()+
+        labs(x = v1, color = v2)
+    
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 4
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('adult_modified.csv')
+d <- d %>% select(-occupation, -native_country)
+variables_names = names(d)
+variables_numeric = d %>% select_if(is.numeric) %>% names
+variables_category = d %>% select_if(is.character) %>% names
+
+
+ui <- fluidPage(
+  
+  titlePanel("Density Plot for Adult Census Data"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      
+      selectInput(
+        inputId ="var1",
+        label = "Select a Numeric Variable",
+        choices = variables_numeric, selected = "education_num"
+      ),
+      
+      selectInput(
+        inputId ="var2",
+        label = "Select a Categorical Variable",
+        choices = variables_category,
+        selected = "workclass"
+      ), 
+      
+      sliderInput(inputId = "age",
+                  "Select Age Range:",
+                  min = min(d$age, na.rm=TRUE),
+                  max = max(d$age, na.rm=TRUE),
+                  value= c(15, 100))
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  
+  output$show_plot <- renderPlot({
+    
+    v1 = input$var1
+    v2 = input$var2
+   
+    
+    library(ggplot2)
+    
+    d <- d %>% filter(age>input$age[1], age<input$age[2])
+      
+    ggplot(d, aes(x = d[[v1]], color = as.factor(d[[v2]])))+
+        geom_density()+
+        labs(x = v1, color = v2)
+      
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 5
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('who_covid.csv')
+numeric_variables = d %>% select_if(is.numeric) %>% names()
+
+variables_names = names(d)
+
+ui <- fluidPage(
+  
+  titlePanel("Covid19 Data for Iceland, Sweden, and Norway"),
+  
+  sidebarLayout(
+    
+    # Side Panel for reading inputs
+    sidebarPanel(
+      
+      selectInput(
+        inputId ="var1",
+        label = "Select a Stat",
+        choices = numeric_variables, selected = "New_Cases"
+      ),
+      
+      checkboxGroupInput(inputId = "selected_country", label = "Select Country",
+                         choices = c('Iceland','Norway','Sweden'), inline = TRUE),
+      
+      dateRangeInput(inputId = "date", 
+                     strong("Date range"), 
+                     start = "2020-01-01", end = "2021-11-25",
+                     min = "2020-01-01", max = "2021-11-25"),
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  output$show_plot <- renderPlot({
+    d = read_csv('who_covid.csv')
+    v1 = input$var1
+    v2 = input$var2
+    country = input$selected_country
+    print(v1)
+    library(ggplot2)
+    # r <- d %>% filter(Country %in% country) %>% 
+    #   ggplot(aes(x = Date_reported, y = d[[v1]]))+
+    #   geom_point()+
+    #   labs(x = 'Date', y = d[[v1]])
+    
+    d <- d %>% filter(Country %in% country, Date_reported>input$date[1],  Date_reported<input$date[2]) 
+    
+    r <- d %>% ggplot(aes(x = Date_reported, y = d[[v1]], color = Country))+
+      geom_point()+
+      labs(x = 'Date', y = v1)
+    
+    return(r)
+    
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 6
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('adult_modified.csv')
+d <- d %>% select(-native_country, -occupation)
+variables_names = names(d)
+variables_numeric = d %>% select_if(is.numeric) %>% names
+variables_category = d %>% select_if(is.character) %>% names
+ui <- fluidPage(
+  
+  titlePanel("Density Plot for Adult Census Data"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      
+      selectInput(
+        inputId ="var1",
+        label = "Select a Numeric Variable",
+        choices = variables_numeric, selected = "hours_per_week"
+      ),
+      
+      selectInput(
+        inputId ="var2",
+        label = "Select a Categorical Variable",
+        choices = variables_category,
+        selected = "marital_status"
+      ),
+      
+      radioButtons(inputId = "plot_choice", 
+                   label = h3("Select Plot:"),
+                   choices = c("Density Plot" = "density",
+                     "Histogram Plot" = "histogram"),
+                   selected = 'density')
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  
+  output$show_plot <- renderPlot({
+    
+    v1 = input$var1
+    v2 = input$var2
+   
+    
+    library(ggplot2)
+    
+    if(input$plot_choice == 'density')
+      
+    {
+      ggplot(d, aes(x = d[[v1]], color = as.factor(d[[v2]])))+
+        geom_density()+
+        labs(x = v1, color = v2)
+    }
+    
+    else
+    {
+      ggplot(d, aes(x = d[[v1]], color = as.factor(d[[v2]])))+
+        geom_histogram()+
+        labs(x = v1, color = v2)
+    }
+      
+      
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 7
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+
+d = read_csv('adult_modified.csv')
+# drop some columns
+d <- d %>% select(-occupation, -native_country)
+variables_names = names(d)
+variables_numeric = d %>% select_if(is.numeric) %>% names
+variables_category = d %>% select_if(is.character) %>% names
+ui <- navbarPage("Navbar!",
+           tabPanel("Plot1",
+                    
+                    sidebarLayout(
+                      sidebarPanel(
+                        
+                        selectInput(
+                          inputId ="var1",
+                          label = "Select a Numeric Variable",
+                          choices = variables_names, selected = "capital_gain"
+                        )
+                      ),
+                      
+                      mainPanel(
+                        plotOutput(outputId = 'show_plot')
+                      )
+                    )
+           ),
+           
+           
+           tabPanel("Plot2",
+                    
+                    sidebarLayout(
+                      sidebarPanel(
+                        
+                        selectInput(
+                          inputId ="var2",
+                          label = "Select a Categorical Variable",
+                          choices = variables_names, selected = "race"
+                        )
+                      ),
+                      
+                      mainPanel(
+                        plotOutput(outputId = 'show_plot2')
+                      )
+                    )
+           )
+)
+
+# server is a function! 
+server <- function(input, output) {
+  
+  
+  output$show_plot <- renderPlot({
+    
+    v1 = input$var1
+    
+    library(ggplot2)
+    
+      ggplot(d, aes(x = d[[v1]]))+
+        geom_density()+
+        labs(x = v1)
+    
+    
+  })
+  
+  output$show_plot2 <- renderPlot({
+    
+    v2 = input$var2
+    
+    library(ggplot2)
+    
+    ggplot(d, aes(x = d[[v2]]))+
+      geom_bar()+
+      labs(x = v2)
+    
+    
+  })
+  
+}
+# app
+shinyApp(ui = ui, server = server)
+```
+
+## Question 8
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+library(DT)
+
+ui <- fluidPage(
+
+  titlePanel("Visualization"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      fileInput('f1', label = 'Upload Data for Visualization (.csv Only)', accept = '.csv'),
+      
+      selectInput('v1', label='Select a Categorical Variable', choices=''),
+      selectInput('v2', label='Select a  Categorical Variable', choices='')
+    
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server
+server <- function(input, output, session) {
+  
+  myData <- reactive({
+    inFile = input$f1
+    if (is.null(inFile)) return(NULL)
+    data <- read.csv(inFile$datapath, header = TRUE)
+    data
+  }
+    )
+    
+  output$show_plot <- renderPlot({
+  
+    inFile = input$f1
+    v1 = input$v1
+    d <- read.csv(inFile$datapath, header = TRUE)
+    
+    v1 = input$v1
+    v2 = input$v2
+    
+    
+      library(ggplot2)
+      
+      r = ggplot(d, aes(x = d[[v1]], color = as.factor(d[[v2]])))+
+        geom_bar()+
+        labs(x = v1, color = v2)
+      
+    return(r)
+    
+  })
+  
+  
+  observeEvent(input$f1,{ 
+    inFile = input$f1
+    data <- read.csv(inFile$datapath, header = TRUE)   
+               updateSelectInput(session, 'v1', choices = names(data))}
+               )
+  
+  observeEvent(input$f1,{ 
+    inFile = input$f1
+    data <- read.csv(inFile$datapath, header = TRUE)   
+    updateSelectInput(session, 'v2', choices = names(data))}
+  )
+
+}
+
+
+shinyApp(ui = ui, server = server)
+
+```
+
+## Question 9 
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(shiny)
+library(DT)
+ui <- fluidPage(
+  
+  titlePanel("Visualization"),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      fileInput('f1', label = 'Upload Your Own Data For Visualization', accept = '.csv'),
+      
+      selectInput('v1', label='Select a Numeric Variable', choices=''),
+      selectInput('v2', label='Select another Numeric Variable', choices=''),
+      selectInput('v3', label='Select a Categorical Variable', choices='')
+      
+    
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      plotOutput(outputId = 'show_plot')
+    )
+  )
+)
+
+# server
+server <- function(input, output, session) {
+  
+  myData <- reactive({
+    inFile = input$f1
+    if (is.null(inFile)) return(NULL)
+    data <- read.csv(inFile$datapath, header = TRUE)
+    data
+  }
+    )
+    
+  output$show_plot <- renderPlot({
+  
+    inFile = input$f1
+    v1 = input$v1
+    d <- read.csv(inFile$datapath, header = TRUE)
+    
+    v1 = input$v1
+    v2 = input$v2
+    v3 = input$v3
+    
+    
+      library(ggplot2)
+      
+      r = ggplot(d, aes(x = d[[v1]], y = d[[v2]], color = as.factor(d[[v3]])))+
+        geom_point()+
+        labs(x = v1, y = v2, color = v3)
+      
+    return(r)
+    
+  })
+  
+  
+  observeEvent(input$f1,{ 
+    inFile = input$f1
+    data <- read.csv(inFile$datapath, header = TRUE)   
+               updateSelectInput(session, 'v1', choices = names(data))}
+               )
+  
+  observeEvent(input$f1,{ 
+    inFile = input$f1
+    data <- read.csv(inFile$datapath, header = TRUE)   
+    updateSelectInput(session, 'v2', choices = names(data))}
+  )
+  observeEvent(input$f1,{ 
+    inFile = input$f1
+    data <- read.csv(inFile$datapath, header = TRUE)   
+    updateSelectInput(session, 'v3', choices = names(data))}
+  ) 
+
+}
+
+
+shinyApp(ui = ui, server = server)
+
+```
+
+

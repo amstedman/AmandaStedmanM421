@@ -35,4 +35,8 @@
 
 [Assignment 15](Assignment15.html)
 
+[Final Questions 1-9](M421Final1-9.Rmd)
+
+[Final Questions 10-12](M421Final10-12.Rmd)
+
 
